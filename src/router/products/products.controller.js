@@ -1,23 +1,56 @@
 const {Router} = require('express')
 const {products} = require ('../../productsManager');
+const Products = require('../../model/Products.model');
+const FilesDao = require('../../dao/files.dao');
 
 const router = Router()
-
-//Todos los productos
-router.get('/', (req,res) => {
+const productsFile = new FilesDao('products.json')
+// //Todos los productos
+// router.get('/', (req,res) => {
   
-    const limit = req.query.limit;
-    const productos =   products.getProducts();
+//     const limit = req.query.limit;
+//     const productos =   products.getProducts();
     
-    console.log(productos)
+//     console.log(productos)
+//     if (limit){
+//         respuesta =  productos.slice(0,limit)
+//     } else {
+//         respuesta = productos;
+//     }
+//         res.send(respuesta) 
+//    // res.render('home.handlebars', {respuesta} )
+// });
+
+router.get('/', async (req,res) => {
+    try {
+        const limit = req.query.limit;
+        const productos =   products.getProducts();
+        const users = await Products.find()
+
+        console.log(productos)
+        
     if (limit){
         respuesta =  productos.slice(0,limit)
     } else {
         respuesta = productos;
     }
-        res.send(respuesta) 
-   // res.render('home.handlebars', {respuesta} )
+        res.json({ status: 'success', message: users }) 
+    }catch (error) {
+        console.log(error)
+        res.status(400).json({status: 'error', error})
+    }
 });
+
+router.get('/loadData', async (req,res) => {
+    try {
+        const products = await productsFile.getItemsDao()
+        const newProducts = await Products.insertMany(products)
+        res.json({ status: 'success', mensage: newProducts })
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({status: 'error', error})
+    }
+})
 
 //Producto por id
 router.get('/:pid', (req,res) => {
@@ -27,11 +60,25 @@ router.get('/:pid', (req,res) => {
   });
 
 //Agregar Producto
-router.post('/', (req,res) => {
-const {title, description, price, thumbnail, code, stock, status, category} = req.body;
-products.addProduct(title, description, price, thumbnail, code, stock, status, category);
+// router.post('/', (req,res) => {
+// const {title, description, price, thumbnail, code, stock, status, category} = req.body;
+// products.addProduct(title, description, price, thumbnail, code, stock, status, category);
 
-res.status(201).json({message: '¡Producto Agregado!'})
+// res.status(201).json({message: '¡Producto Agregado!'})
+// })
+
+router.post('/', async (req,res) => {
+    try {
+        const { title, description, price, thumbnail, code, stock, status, category} = req.body
+        const newProductInfo = { title, description, price, thumbnail, code, stock, status, category}
+
+        const newProduct = await Users.create(newProductInfo)
+
+        res.json({status: 'success', message: newProduct})
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({status: 'error', error})
+    }
 })
 
 //Actualizar Producto
