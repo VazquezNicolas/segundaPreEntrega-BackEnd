@@ -15,12 +15,30 @@ router.get('/', async (req,res) => {
     }
 })
 
+router.patch('/:cid', async (req,res) => {
+    try {
+    const {cid} = req.params
+    const {product} = req.body
+
+    const cart = await Carts.findOne ({ _id: cid})
+    cart.products.push({product})
+        
+    const response = await Carts.updateOne({_id: cid}, cart)
+
+    res.json({ message: response})
+    } catch (error) {
+    
+        res.status(400).json({status: 'error', error})
+    }
+})
+
 //Agregar carrito
 router.post('/', async (req,res) => {
     try {
-        const newId = req.body
-        const newCart = await Carts.create(newId)   
+        const sinEstoNoFunciona = null
+        const newCart = await Carts.create(sinEstoNoFunciona)   
         console.log(newCart)
+
         res.status(201).json({message: `Nuevo Carrito Agregado! `})
         
     } catch (error) {
@@ -28,5 +46,7 @@ router.post('/', async (req,res) => {
         res.status(400).json({status: 'error', error})
     }
 })
+
+//
 
 module.exports = router
