@@ -57,17 +57,28 @@ router.delete('/:cid/products/:pid', async (req,res) => {
 
     const cart = await Carts.findOne ({ _id: cid})
     const product = await Products.findOne ({ _id: pid})
-    
-    console.log(product)
-    cart.products = await cart.products.filter(e => e !== product)
-        
-    await Carts.updateOne({_id: cid}, cart)
 
+    let i = 0;
+
+    console.log(cart.products.length)
+    if(cart.products.length > 0){
+        while (i != -1){
+            if(cart.products[i].product == pid){
+            cart.products.splice(0,(i+1))
+            i = -1 //Corto el while
+            }else {
+                i++
+            }
+        }
+    await Carts.updateOne({_id: cid}, cart)
     res.json({ message: "Producto eliminado"})
+    }else{
+    res.json({ message: "El carrito esta vacio!"})
+    }
     } catch (error) {
     
         console.log(error)
-        res.status(400).json({status: 'error', error})
+        res.status(400).json({message: "No se encontro el id del producto o carrito"})
     }
 })
 
