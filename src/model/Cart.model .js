@@ -2,21 +2,21 @@ const mongoose = require('mongoose')
 
 const collectionName = 'carts'
 
-const collectiosSchema = new mongoose.Schema({
-    idCart: Number,
+const collectionsSchema = new mongoose.Schema({
+    
     products: {
         type: [
             {
-                product: {
-                    type: mongoose.Schema.Types.ObjectId,
+                 product: {
+                    type: mongoose.Schema.Types.ObjectId ,
                     ref: 'products'
-                }
-            }
+                 },
+            },
         ],
         default: [],
-    },
+    }
 })
 
-const Carts = mongoose.model(collectionName, collectiosSchema)
+const Carts = mongoose.model(collectionName, collectionsSchema)
 
 module.exports = Carts

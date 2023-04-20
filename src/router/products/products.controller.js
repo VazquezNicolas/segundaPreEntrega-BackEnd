@@ -25,7 +25,7 @@ router.get('/', async (req,res) => {
     try {
         const limit = req.query.limit;
         const productos =   products.getProducts();
-        const users = await Products.find()
+        const product = await Products.find()
 
         console.log(productos)
         
@@ -34,7 +34,7 @@ router.get('/', async (req,res) => {
     } else {
         respuesta = productos;
     }
-        res.json({ status: 'success', message: users }) 
+        res.json({ status: 'success', message: product }) 
     }catch (error) {
         console.log(error)
         res.status(400).json({status: 'error', error})
@@ -72,7 +72,7 @@ router.post('/', async (req,res) => {
         const { title, description, price, thumbnail, code, stock, status, category} = req.body
         const newProductInfo = { title, description, price, thumbnail, code, stock, status, category}
 
-        const newProduct = await Users.create(newProductInfo)
+        const newProduct = await Products.create(newProductInfo)
 
         res.json({status: 'success', message: newProduct})
     } catch (error) {
