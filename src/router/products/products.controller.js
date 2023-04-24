@@ -21,25 +21,39 @@ const productsFile = new FilesDao('products.json')
 //    // res.render('home.handlebars', {respuesta} )
 // });
 
-router.get('/', async (req,res) => {
-    try {
-        const limit = req.query.limit;
-        const productos =   products.getProducts();
-        const product = await Products.find()
+router.get('/',async (req,res)=>{
+    let page = parseInt(req.query.page);
+    let limit = req.query.limit
 
-        console.log(productos)
+    if(!limit){ limit = 10}
+
+    if(!page) page=1;
+    //Lean es crucial para mostrar en Handlebars, ya que evita la "hidratación" del documento de mongoose,
+    //esto hace que a Handlebars llegue el documento como plain object y no como Document.
+    let result = await Products.paginate({},{page,limit,lean:true})
+    result.prevLink = result.hasPrevPage?`http://localhost:3000/api/products?page=${result.prevPage}`:'';
+    result.nextLink = result.hasNextPage?`http://localhost:3000/api/products?page=${result.nextPage}`:'';
+    result.isValid= !(page<=0||page>result.totalPages)
+    res.render('products',result)
+})
+
+// router.get('/', async (req,res) => {
+//     try {
+//         const limit = req.query.limit;
+//         const productos =   products.getProducts();
+//         const product = await Products.find()
         
-    if (limit){
-        respuesta =  productos.slice(0,limit)
-    } else {
-        respuesta = productos;
-    }
-        res.json({ status: 'success', message: product }) 
-    }catch (error) {
-        console.log(error)
-        res.status(400).json({status: 'error', error})
-    }
-});
+//     if (limit){
+//         respuesta =  productos.slice(0,limit)
+//     } else {
+//         respuesta = productos;
+//     }
+//         res.json({ status: 'success', message: product }) 
+//     }catch (error) {
+//         console.log(error)
+//         res.status(400).json({status: 'error', error})
+//     }
+// });
 
 router.get('/loadData', async (req,res) => {
     try {

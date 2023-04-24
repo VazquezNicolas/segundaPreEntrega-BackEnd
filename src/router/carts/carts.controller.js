@@ -1,22 +1,37 @@
 const {Router} = require('express')
 const Carts = require('../../model/Cart.model ')
 const FilesDao = require('../../dao/files.dao');
-const Products = require('../../model/Products.model');
+
 
 const router = Router()
 const cartFile = new FilesDao('products.json')
 
 //Mostrar todos los carritos
-router.get('/', async (req,res) => {
-    try {
-        const cart = await Carts.find()
-        res.json(cart)
+// router.get('/', async (req,res) => {
+//     try {
+//         const cart = await Carts.find()
+//         res.json(cart)
 
-    } catch (error) {
-        res.status(400).json({status: 'error', error})
-    }
+//     } catch (error) {
+//         res.status(400).json({status: 'error', error})
+//     }
+// })
+router.get('/',async (req,res)=>{
+    let page = parseInt(req.query.page);
+    let limit = req.query.limit
+
+
+    if(!limit){ limit = 10}
+
+    if(!page) page=1;
+    //Lean es crucial para mostrar en Handlebars, ya que evita la "hidratación" del documento de mongoose,
+    //esto hace que a Handlebars llegue el documento como plain object y no como Document.
+    let result = await Carts.paginate({},{page,limit,lean:true})
+    result.prevLink = result.hasPrevPage?`http://localhost:3000/api/carts?page=${result.prevPage}`:'';
+    result.nextLink = result.hasNextPage?`http://localhost:3000/api/carts?page=${result.nextPage}`:'';
+    result.isValid= !(page<=0||page>result.totalPages)
+    res.render('carts',result)
 })
-
 //Agregar producto a carrito
 router.put('/:cid/products/:pid', async (req,res) => {
     try {
