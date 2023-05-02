@@ -2,6 +2,7 @@ const {Router} = require('express')
 const Carts = require('../../dao/model/Cart.model ')
 const Products = require('../../dao/model/Products.model');
 const FilesDao = require('../../dao/files.dao');
+const { products } = require('../../productsManager');
 
 const router = Router()
 const cartFile = new FilesDao('products.json')
@@ -29,8 +30,8 @@ router.put('/:cid/products/:pid', async (req,res) => {
     
     let cart = await Carts.findOne ({ _id: cid}).populate("products.product")
     let product = await Products.findOne ({ _id: pid})
-
-    if(cart.products.length > 0 ){
+    
+    if(cart.products != null ){
         for ( i=0; i < cart.products.length; i++ ){
             if(cart.products[i].product._id == pid){ //El producto esta repetido
 
@@ -50,12 +51,14 @@ router.put('/:cid/products/:pid', async (req,res) => {
         if(encontro == 0) {
             console.log("No encontro") //El producto no esta repetido
             cart.products.push({product})
+            cart.products[0].quantity = 1
             let response = await Carts.updateOne({_id: cid}, cart)
             res.json({ message: response})
         }
     }else {
         console.log("carrito vacio")
         cart.products.push({product}) //El carrito esta vacio
+        cart.products[0].quantity = 1
         let response = await Carts.updateOne({_id: cid}, cart)
         res.json({ message: response})
     }
@@ -88,14 +91,19 @@ router.delete('/:cid/products/:pid', async (req,res) => {
 
     const cart = await Carts.findOne ({ _id: cid})
     const product = await Products.findOne ({ _id: pid})
-
     let i = 0;
 
-    console.log(cart.products.length)
+        console.log(cart)
+
     if(cart.products.length > 0){
         while (i != -1){
             if(cart.products[i].product == pid){
-            cart.products.splice(0,(i+1))
+                if(cart.products[i].quantity > 1){
+                    cart.products[i].quantity --
+                }
+                else if(cart.products[i].quantity == 1 || cart.products[i].quantity == null){
+                    cart.products.splice(0,(i+1))
+                }
             i = -1 //Corto el while
             }else {
                 i++
