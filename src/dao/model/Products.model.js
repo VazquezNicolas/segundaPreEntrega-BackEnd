@@ -6,15 +6,16 @@ const collectionName = 'products'
 const collectionsSchema = new mongoose.Schema({
     title: String,
     description: String,
-    price: String,
+    price: Number,
     thumbnail: String,
     code: String,
     stock: Number,
     status: Boolean,
     category: String,
+    quantity: Number,
 })
 
 collectionsSchema.plugin(mongoosePaginate)
-const Products = mongoose.model(collectionName, collectionsSchema)
+let Products = mongoose.model(collectionName, collectionsSchema)
 
 module.exports = Products

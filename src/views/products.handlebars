@@ -3,8 +3,10 @@
     {{#each docs}}
     <div>
         <p>Producto: {{this.title}} &nbsp; Descripcion: {{this.description}}</p>
-        <p>Categoria: {{this.category}} &nbsp; Precio: {{this.price}}</p>
+        <p>Categoria: {{this.category}} &nbsp; Precio: {{this.price}} &nbsp; Id: {{this._id}}</p>
+        <button type="submit">Agregar al carrito</button>
     </div>
+    <br/>
     <br/>
     {{/each}}
 </div>
