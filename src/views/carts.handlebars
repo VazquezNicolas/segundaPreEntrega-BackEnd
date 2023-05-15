@@ -1,7 +1,9 @@
 {{!-- {{#if hayCart}} --}}
     <p>Carrito: {{title}} </p>
     {{#each productos}}
-        <p>Productos: {{this.product}} </p>
+        <p>Productos: {{this.product.title}} </p>
+        <p>Precio: {{this.product.price}}</p>
+        <p>Cantidad: {{this.quantity}}</p>
         <button type="submit"> Eliminar producto</button>
     {{/each}}
     <br/>
