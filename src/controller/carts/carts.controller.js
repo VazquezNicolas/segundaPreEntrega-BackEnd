@@ -25,7 +25,6 @@ router.get('/', async (req,res) => {
     }
 })
 
-
 //Agregar producto a carrito
 router.put('/:cid/products/:pid', async (req,res) => {
     try {

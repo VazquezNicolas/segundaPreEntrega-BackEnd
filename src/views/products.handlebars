@@ -1,11 +1,11 @@
 {{#if isValid}}
 <h1>Todos los productos</h1>
 <div>
-    {{#each docs}}
+    {{#each result}}
     <div>
         <p>Producto: {{this.title}} &nbsp; Descripcion: {{this.description}}</p>
         <p>Categoria: {{this.category}} &nbsp; Precio: {{this.price}} &nbsp; Id: {{this._id}}</p>
-        <button type="submit">Agregar al carrito</button>
+        <button type="submit" data-product-id={{this._id}} data-cart-id={{id-cart}} id="addProduct">Comprar</button>
     </div>
     <br/>
     <br/>
@@ -14,15 +14,19 @@
 <br/>
 <div>
     {{#if hasPrevPage}}
-        <a href={{this.prevLink}}><< Anterior</a>
+        <a href={{prevLink}}><< Anterior</a>
     {{/if}}
     &nbsp;
     {{this.page}}
     &nbsp;
      {{#if hasNextPage}}
-        <a href={{this.nextLink}}>Siguiente >></a>
+        <a href={{nextLink}}>Siguiente >></a>
     {{/if}} 
 </div>
+
 {{else}}
 <h1>No hay productos para mostrar</h1>
 {{/if}}
+
+
+<script src="/js/addProduct.js"></script>

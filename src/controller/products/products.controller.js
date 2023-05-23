@@ -2,6 +2,7 @@ const {Router} = require('express')
 const {products} = require ('../../productsManager');
 const Products = require('../../dao/model/Products.model');
 const FilesDao = require('../../dao/files.dao');
+const Carts = require('../../dao/model/Cart.model ');
 
 const router = Router()
 const productsFile = new FilesDao('products.json')
@@ -17,20 +18,37 @@ router.get('/',async (req,res)=>{
 
     if (!filtro) {
          let result = await Products.paginate({},{page,limit,lean:true,})
+         const cart = await Carts.findOne().populate("products.product")
          result.status = "succes"
          result.prevLink = result.hasPrevPage?`http://localhost:3000/api/products?limit=${limit}&page=${result.prevPage}`:'';
          result.nextLink = result.hasNextPage?`http://localhost:3000/api/products?limit=${limit}&page=${result.nextPage}`:'';
          result.isValid= !(page<=0||page>result.totalPages)
-         res.render('products',result)
-         console.log(result)
+         res.render('products', {
+            result: result.docs,
+            id_cart: cart._id,
+            isValid: result.isValid,
+            hasPrevPage: result.hasPrevPage,
+            hasNextPage: result.hasNextPage,
+            prevLink: result.prevLink,
+            nextLink: result.nextLink
+        })
+         console.log(result, cart._id,)
     } else {
         let result = await Products.paginate({category: `${filtro}`},{page,limit,lean:true,})
+        const cart = await Carts.findOne().populate("products.product")
         result.status = "succes"
         result.prevLink = result.hasPrevPage?`http://localhost:3000/api/products?limit=${limit}&filtro=${filtro}&page=${result.prevPage}`:'';
         result.nextLink = result.hasNextPage?`http://localhost:3000/api/products?limit=${limit}&filtro=${filtro}&page=${result.nextPage}`:'';
         result.isValid= !(page<=0||page>result.totalPages)
-        res.render('products',result)
-        console.log(result)
+        res.render('products', {
+            result: result.docs,
+            id_cart: cart._id,
+            isValid: result.isValid,
+            hasPrevPage: result.hasPrevPage,
+            hasNextPage: result.hasNextPage,
+            prevLink: result.prevLink,
+            nextLink: result.nextLink
+        })
     }
         
 })
