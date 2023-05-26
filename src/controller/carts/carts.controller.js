@@ -2,6 +2,8 @@ const {Router} = require('express')
 const Carts = require('../../dao/model/Cart.model ')
 const Products = require('../../dao/model/Products.model');
 const FilesDao = require('../../dao/files.dao');
+const { ObjectId } = require('mongodb');
+
 const { products } = require('../../productsManager');
 
 const router = Router()
@@ -13,10 +15,11 @@ router.get('/', async (req,res) => {
         const cart = await Carts.findOne().populate("products.product")
         const productos = (cart.products)
         console.log(cart)
+        console.log("Producots")
         console.log(productos)
         res.render('carts', {
             cart,
-            title: cart._id,
+            cartId: cart._id,
             productos: productos
         })
     } catch (error) {
@@ -28,19 +31,22 @@ router.get('/', async (req,res) => {
 //Agregar producto a carrito
 router.put('/:cid/products/:pid', async (req,res) => {
     try {
-    const {cid, pid} = req.params
+    let {cid, pid} = req.params
 
     let i = 0
     let encontro = 0
     
-    
-    let cart = await Carts.findOne ({ _id: cid}).populate("products.product")
+    let cart = await Carts.findOne ({ _id: cid})
     let product = await Products.findOne ({ _id: pid})
-    
+
     if(cart.products != null ){
         for ( i=0; i < cart.products.length; i++ ){
-            if(cart.products[i].product._id == pid){ //El producto esta repetido
+            let guardo = cart.products[i].product._id
+            let guardop = pid
+            let idCartString = guardo.toString()
+            let idProductString = guardop.toString()
 
+            if(idCartString == idProductString){ //El producto esta repetido
                 cart.products[i].product.quantity ++ 
                 encontro = 1;
                 cantidad = cart.products[i].product.quantity
@@ -50,23 +56,22 @@ router.put('/:cid/products/:pid', async (req,res) => {
                     cart.products[i].quantity ++
                 }
                 let response2 = await Carts.updateOne({_id: cid}, cart)
-                res.json({ message: response2})   
+                res.json({ message: "Producto Repetido, quantity ++"})   
             }
-
         }
         if(encontro == 0) {
             console.log("No encontro") //El producto no esta repetido
             cart.products.push({product})
             cart.products[0].quantity = 1
             let response = await Carts.updateOne({_id: cid}, cart)
-            res.json({ message: response})
+            res.json({ message: "Producto no repetido, quantity = 1"})
         }
     }else {
         console.log("carrito vacio")
         cart.products.push({product}) //El carrito esta vacio
         cart.products[0].quantity = 1
         let response = await Carts.updateOne({_id: cid}, cart)
-        res.json({ message: response})
+        res.json({ message: "Carrito estaba Vacio, primer producto agregado" })
     }
     
     } catch (error) {

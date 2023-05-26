@@ -5,7 +5,7 @@
     <div>
         <p>Producto: {{this.title}} &nbsp; Descripcion: {{this.description}}</p>
         <p>Categoria: {{this.category}} &nbsp; Precio: {{this.price}} &nbsp; Id: {{this._id}}</p>
-        <button type="submit" data-product-id={{this._id}} data-cart-id={{id-cart}} id="addProduct">Comprar</button>
+        <button type="click" id="addProduct" data-productid={{this._id}} data-cartid={{this.cartId}}>Comprar</button>
     </div>
     <br/>
     <br/>

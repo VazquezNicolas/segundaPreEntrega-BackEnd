@@ -1,21 +1,20 @@
-let miboton = document.getElementById('addProduct')
+let daleteAll = document.getElementById('deleteAllProducts')
 
-miboton.addEventListener('click', e => {
+daleteAll.addEventListener('click', e => {
 
     let cid =  e.target.getAttribute("data-cartid")
-    let pid = e.target.getAttribute("data-productid")
+
     let obj = {}
 
     obj["cid"] = cid
-    obj["pid"] = pid
-    console.log(cid)
-    console.log(pid)
 
-    const url = `/api/carts/${cid}/products/${pid}`
+    console.log(cid)
+
+    const url = `/api/carts/${cid}`
     const headers = {
         'Content-Type': 'application/json'
     }
-    const method = 'PUT'
+    const method = 'DELETE'
     console.log(obj)
     const body = JSON.stringify(obj)
     console.log("Body: ")
@@ -26,6 +25,6 @@ miboton.addEventListener('click', e => {
         body,
     })
     .then(response => response.json())
-    .then(data => alert("Producto Agregado al carrito"))
+    .then(data => alert("Carrito Vaciado"))
     .catch(error => console.log(error))
 })

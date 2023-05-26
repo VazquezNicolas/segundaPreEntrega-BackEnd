@@ -1,16 +1,17 @@
 {{!-- {{#if hayCart}} --}}
-    <p>Carrito: {{title}} </p>
+    <p>Carrito: {{cartId}} </p>
     {{#each productos}}
         <p>Productos: {{this.product.title}} </p>
         <p>Precio: {{this.product.price}}</p>
         <p>Cantidad: {{this.quantity}}</p>
-        <button type="submit"> Eliminar producto</button>
+        <button type="click" id="deleteProduct" data-productid={{this.product._id}} data-cartid={{this.product.cartId}}>Eliminar Producto</button>
     {{/each}}
     <br/>
     <br/>
-    <button type="submit">Vaciar carrito</button>
+    <button type="click" id="deleteAllProducts" data-cartid={{cartId}}>Vaciar carrito</button>
 <br/>
-
+<script src="/js/deleteProduct.js"></script>
+<script src="/js/deleteAllProducts.js"></script>
 {{!-- {{else}}
 <h1>No hay carritos para mostrar</h1>
 {{/if}} --}}

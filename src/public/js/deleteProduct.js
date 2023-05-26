@@ -1,4 +1,4 @@
-let miboton = document.getElementById('addProduct')
+let miboton = document.getElementById('deleteProduct')
 
 miboton.addEventListener('click', e => {
 
@@ -15,7 +15,7 @@ miboton.addEventListener('click', e => {
     const headers = {
         'Content-Type': 'application/json'
     }
-    const method = 'PUT'
+    const method = 'DELETE'
     console.log(obj)
     const body = JSON.stringify(obj)
     console.log("Body: ")
@@ -26,6 +26,6 @@ miboton.addEventListener('click', e => {
         body,
     })
     .then(response => response.json())
-    .then(data => alert("Producto Agregado al carrito"))
+    .then(data => alert("PRoducto Eliminado"))
     .catch(error => console.log(error))
 })

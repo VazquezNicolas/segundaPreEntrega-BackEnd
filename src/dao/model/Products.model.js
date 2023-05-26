@@ -13,6 +13,7 @@ const collectionsSchema = new mongoose.Schema({
     status: Boolean,
     category: String,
     quantity: Number,
+    cartId: String,
 })
 
 collectionsSchema.plugin(mongoosePaginate)

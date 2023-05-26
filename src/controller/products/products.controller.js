@@ -18,36 +18,37 @@ router.get('/',async (req,res)=>{
 
     if (!filtro) {
          let result = await Products.paginate({},{page,limit,lean:true,})
-         const cart = await Carts.findOne().populate("products.product")
+         let cart = await Carts.findOne()
          result.status = "succes"
          result.prevLink = result.hasPrevPage?`http://localhost:3000/api/products?limit=${limit}&page=${result.prevPage}`:'';
          result.nextLink = result.hasNextPage?`http://localhost:3000/api/products?limit=${limit}&page=${result.nextPage}`:'';
          result.isValid= !(page<=0||page>result.totalPages)
          res.render('products', {
             result: result.docs,
-            id_cart: cart._id,
             isValid: result.isValid,
             hasPrevPage: result.hasPrevPage,
             hasNextPage: result.hasNextPage,
             prevLink: result.prevLink,
-            nextLink: result.nextLink
+            nextLink: result.nextLink,
+            cartId: result.cartId,
         })
-         console.log(result, cart._id,)
+         console.log(result)
+         
     } else {
         let result = await Products.paginate({category: `${filtro}`},{page,limit,lean:true,})
-        const cart = await Carts.findOne().populate("products.product")
+        let cart = await Carts.findOne()
         result.status = "succes"
         result.prevLink = result.hasPrevPage?`http://localhost:3000/api/products?limit=${limit}&filtro=${filtro}&page=${result.prevPage}`:'';
         result.nextLink = result.hasNextPage?`http://localhost:3000/api/products?limit=${limit}&filtro=${filtro}&page=${result.nextPage}`:'';
         result.isValid= !(page<=0||page>result.totalPages)
         res.render('products', {
             result: result.docs,
-            id_cart: cart._id,
             isValid: result.isValid,
             hasPrevPage: result.hasPrevPage,
             hasNextPage: result.hasNextPage,
             prevLink: result.prevLink,
-            nextLink: result.nextLink
+            nextLink: result.nextLink,
+            cartId: result.cartId,
         })
     }
         
@@ -73,8 +74,8 @@ router.get('/:pid', (req,res) => {
 
 router.post('/', async (req,res) => {
     try {
-        const { title, description, price, thumbnail, code, stock, status, category, quantity} = req.body
-        const newProductInfo = { title, description, price, thumbnail, code, stock, status, category, quantity}
+        const { title, description, price, thumbnail, code, stock, status, category, quantity, cartId} = req.body
+        const newProductInfo = { title, description, price, thumbnail, code, stock, status, category, quantity, cartId}
 
         const newProduct = await Products.create(newProductInfo)
 
